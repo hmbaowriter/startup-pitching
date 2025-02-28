@@ -47,7 +47,7 @@ export const startupType = defineType({
   ],
   preview: {
     select: {
-      title: "name",
+      title: "title",
     },
   },
 });
