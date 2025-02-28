@@ -1,5 +1,7 @@
 import SearchForm from "@/components/SearchForm";
-import StartupCard from "@/components/StartupCard";
+import StartupCard, {StartupTypeCard} from "@/components/StartupCard";
+import { client } from "@/sanity/lib/client";
+import { STARTUPS_QUERY } from "@/sanity/lib/queries";
 
 export default async function HomePage({
   searchParams,
@@ -8,19 +10,22 @@ export default async function HomePage({
 }) {
   const query = (await searchParams).query;
 
-  const posts = [
-    {
-      _createdAt: new Date(),
-      views: 55,
-      author: { _id: 1, name: "Humiba" },
-      _id: 1,
-      description: "This is a description",
-      image:
-        "https://ceblog.s3.amazonaws.com/wp-content/uploads/2023/05/18140417/notion-brand-logo.png",
-      category: "Robots",
-      title: "We Robots",
-    },
-  ];
+  // Go to https://www.sanity.io/learn/course/content-driven-web-application-foundations/fetch-sanity-content to read more about Sanity data fetching
+  const posts = await client.fetch(STARTUPS_QUERY);
+
+  // const posts = [
+  //   {
+  //     _createdAt: new Date(),
+  //     views: 55,
+  //     author: { _id: 1, name: "Humiba" },
+  //     _id: 1,
+  //     description: "This is a description",
+  //     image:
+  //       "https://ceblog.s3.amazonaws.com/wp-content/uploads/2023/05/18140417/notion-brand-logo.png",
+  //     category: "Robots",
+  //     title: "We Robots",
+  //   },
+  // ];
 
   return (
     <>
@@ -41,7 +46,7 @@ export default async function HomePage({
         </p>
         <ul className="card_grid mt-7">
           {posts?.length > 0 &&
-            posts.map((post: StartupCardType, index: number) => (
+            posts.map((post: StartupTypeCard, index: number) => (
               <StartupCard
                 key={post?._id}
                 post={post}
