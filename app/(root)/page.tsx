@@ -1,6 +1,6 @@
 import SearchForm from "@/components/SearchForm";
-import StartupCard, {StartupTypeCard} from "@/components/StartupCard";
-import { client } from "@/sanity/lib/client";
+import StartupCard, { StartupTypeCard } from "@/components/StartupCard";
+import { sanityFetch, SanityLive } from "@/sanity/lib/live";
 import { STARTUPS_QUERY } from "@/sanity/lib/queries";
 
 export default async function HomePage({
@@ -11,21 +11,9 @@ export default async function HomePage({
   const query = (await searchParams).query;
 
   // Go to https://www.sanity.io/learn/course/content-driven-web-application-foundations/fetch-sanity-content to read more about Sanity data fetching
-  const posts = await client.fetch(STARTUPS_QUERY);
+  // const posts = await client.fetch(STARTUPS_QUERY);
 
-  // const posts = [
-  //   {
-  //     _createdAt: new Date(),
-  //     views: 55,
-  //     author: { _id: 1, name: "Humiba" },
-  //     _id: 1,
-  //     description: "This is a description",
-  //     image:
-  //       "https://ceblog.s3.amazonaws.com/wp-content/uploads/2023/05/18140417/notion-brand-logo.png",
-  //     category: "Robots",
-  //     title: "We Robots",
-  //   },
-  // ];
+  const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY });
 
   return (
     <>
@@ -54,6 +42,7 @@ export default async function HomePage({
             ))}
         </ul>
       </section>
+      <SanityLive />
     </>
   );
 }
