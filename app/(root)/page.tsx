@@ -9,11 +9,12 @@ export default async function HomePage({
   searchParams: Promise<{ query?: string }>;
 }) {
   const query = (await searchParams).query;
+  const params = { search: query || null };
 
   // Go to https://www.sanity.io/learn/course/content-driven-web-application-foundations/fetch-sanity-content to read more about Sanity data fetching
   // const posts = await client.fetch(STARTUPS_QUERY);
 
-  const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY });
+  const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY, params });
 
   return (
     <>
