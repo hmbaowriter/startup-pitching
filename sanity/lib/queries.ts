@@ -1,8 +1,7 @@
 import { defineQuery } from "next-sanity";
 
 // https://www.sanity.io/docs/live-content-guide for more information
-export const STARTUPS_QUERY =
-  defineQuery(`
+export const STARTUPS_QUERY = defineQuery(`
   *[_type=="startup" && defined(slug.current) && !defined($search) 
     || title match $search 
     || category match $search 
@@ -19,7 +18,7 @@ export const STARTUPS_QUERY =
     category, 
     image
   }
-`); 
+`);
 
 export const STARTUP_BY_ID_QUERY = defineQuery(`
   *[_type == "startup" && _id == $id][0] {
@@ -36,4 +35,10 @@ export const STARTUP_BY_ID_QUERY = defineQuery(`
     image,
     pitch
   }  
+`);
+
+export const STARTUP_VIEWS_QUERY = defineQuery(`
+  *[_type == "startup" && _id == $id][0]{
+      _id, views
+  }
 `);
