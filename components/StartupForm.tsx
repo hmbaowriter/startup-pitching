@@ -4,16 +4,20 @@ import { useActionState, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { Send } from "lucide-react";
 import { toast } from "sonner";
+import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { formSchema } from "@/lib/validation";
-import { z } from "zod";
+import { createPitch } from "@/lib/actions";
 
 const StartupForm = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pitch, setPitch] = useState("");
+
+  const router = useRouter();
 
   const handleFormSubmit = async (prevState: any, formData: FormData) => {
     try {
@@ -25,22 +29,42 @@ const StartupForm = () => {
         pitch,
       };
 
-      await formSchema.parseAsync(formData);
+      await formSchema.parseAsync(formValues);
 
-      // console.log(formValues);
+      console.log(formValues);
 
-      // const result = await createPitch(prevState, formData, pitch);
+      const result = await createPitch(prevState, formData, pitch);
+
+      if (result.status === "SUCCESS") {
+        toast.success("Success", {
+          description: "Your startup pitch has been created successfully!!!",
+        });
+      }
+
+      router.push(`/startup/${result._id}`);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const fieldErrors = error.flatten().fieldErrors;
+        if (error instanceof z.ZodError) {
+          const fieldErrors = error.flatten().fieldErrors;
 
-        setErrors(fieldErrors as unknown as Record<string, string>);
+          setErrors(fieldErrors as unknown as Record<string, string>);
 
-        toast.error("Error", {
-          description: "Please check your inputs and try again",
+          toast("Error", {
+            description: "Please check your inputs and try again",
+          });
+
+          return { ...prevState, error: "Validation failed", status: "ERROR" };
+        }
+
+        toast("Error", {
+          description: "An unexpected error has occurred",
         });
 
-        return { ...prevState, error: "Validation failed", status: "ERROR" };
+        return {
+          ...prevState,
+          error: "An unexpected error has occurred",
+          status: "ERROR",
+        };
       }
     }
   };
